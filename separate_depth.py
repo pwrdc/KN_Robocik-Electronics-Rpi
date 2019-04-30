@@ -1,17 +1,15 @@
 import ms5837
 import time
-
-from ports import depth_driver_port, depth_client_port
-from rov_comm import Client, ZMQ_Server
 from logpy.LogPy import Logger
-
+from rov_comm import Client
+import ports
 SCALETOCM = 1.019
 
 
 class DepthSensor:
     def __init__(self):
         self.sensor = ms5837.MS5837_30BA() # Default I2C bus is 1 (Raspberry Pi 3)        
-        #self.client = Client(depth_driver_port)
+        self.client = Client(ports.DEPTH_DRIVER_PORT)
         self.logger = Logger(filename='depth')
 
     def run(self):
@@ -28,7 +26,7 @@ class DepthSensor:
         loop_condition = True
         while loop_condition:
             if self.sensor.read():
-                #self.client.send_data(self.sensor.pressure() * SCALETOCM)
+                self.client.send_data(self.sensor.pressure() * SCALETOCM)
 
                 #print(self.sensor.pressure())
                 msg = str(self.sensor.depth())
@@ -36,13 +34,10 @@ class DepthSensor:
             else:
                 loop_condition = False
     def __del__(self):
-        self.logger.exit()
+        pass
+        #self.logger.exit()
 
-if __name__ == '__main__':
-    
-    #server = ZMQ_Server(depth_driver_port, depth_client_port)
-    #server.run()
-    
+if __name__ == '__main__': 
     depth_sensor = DepthSensor()
     depth_sensor.run()
 
