@@ -3,15 +3,16 @@ import json
 import time
 from engine import EngineDriver
 import Pyro4
+from definitions import RPI_ADDRESS
 
 @Pyro4.expose
 class Driver():
     def __init__(self):
         self.engine_driver = EngineDriver()
-        self.daemon = Pyro4.Daemon('192.168.1.2')
+        self.daemon = Pyro4.Daemon(RPI_ADDRESS)
         self.name_server = Pyro4.locateNS()
         self.name_server.register('engines_driver',self.daemon.register(self))
-        print("registered")
+        print("Engines driver registered")
     def compute_power(self,front, right, up, yaw):
         """
         front, right, up, yaw [-1,1]
