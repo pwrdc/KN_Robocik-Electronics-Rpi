@@ -4,6 +4,7 @@ class Engines():
 
 class DepthSensor():
     get_depth = 'get_depth'
+    set_depth = 'set_depth'
 
 class AHRS():
     get_all_data = 'get_all_data'
