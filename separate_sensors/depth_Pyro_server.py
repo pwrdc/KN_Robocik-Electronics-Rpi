@@ -5,7 +5,7 @@ from definitions import RPI_ADDRESS
 class Depth_SERVER():
     def __init__(self):
         self.depth = 0
-        self.daemon = Pyro4.Daemon(RPI_ADDRESS)
+        self.daemon = Pyro4.Daemon('192.168.1.6')
         self.name_server = Pyro4.locateNS()
         self.name_server.register('depth_server',self.daemon.register(self))
         print('Depth server registered')
@@ -21,3 +21,4 @@ class Depth_SERVER():
 
 if __name__ == '__main__':
     depthServer = Depth_SERVER()
+    depthServer.daemon.requestLoop()
