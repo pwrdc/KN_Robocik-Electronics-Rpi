@@ -8,7 +8,7 @@ class Depth_SERVER():
         self.daemon = Pyro4.Daemon(RPI_ADDRESS)
         self.name_server = Pyro4.locateNS()
         self.name_server.register('depth_server',self.daemon.register(self))
-        print('AHRS server registered')
+        print('Depth server registered')
 
     def set_depth(self, data):
         '''
@@ -18,3 +18,6 @@ class Depth_SERVER():
 
     def get_depth(self):
         return self.depth
+
+if __name__ == '__main__':
+    depthServer = Depth_SERVER()
