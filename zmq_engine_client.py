@@ -9,7 +9,7 @@ import ports
 def compute_power(front, right, up, yaw):
     """
     front, right, up, yaw [-1,1]
-    fl (front left), fr, bl, br, vl, vr, vb [-1,1]
+    fl (front left), fr, bl, br, vfl (vertical front left), vfr, vbl, vbr [-1,1]
     przelicza prędkości na moc silników.
     fl przyjmuję początkowo jako 1,
     potem optymalizuję wartości za pomocą correction.
@@ -27,8 +27,7 @@ def compute_power(front, right, up, yaw):
     fr = fl - 2*right - 2*yaw
     bl = fl - 2*front - 2*yaw
     br = fl - 2*right - 2*front
-    vb = up
-    vl = up * vlvr_to_vb
+    vbl = up
 
     correction = -0.5 * (min(fl, fr, bl, br) + max(fl, fr, bl, br))
     fl += correction
@@ -44,9 +43,10 @@ def compute_power(front, right, up, yaw):
         "fr": fr,
         "bl": bl,
         "br": br,
-        "vl": vl,
-        "vr": vl,
-        "vb": vb
+        "vfl": vbl,
+        "vfr": vbl,
+        "vbl": vbl,
+	"vbr": vbl
     }
     
     return motor_powers
@@ -66,7 +66,7 @@ while True:
         string['up'],string['yaw'])
         #print('dictionary type',type(dictionary),dictionary)
         #print(powers)
-        engine_driver.set_engines(powers) #wrzucamy dict na silniki
+        #tu wstawic nasza komunikacje (spi - Igor, Maciek)
     except Exception as e:
         print(e)
         time.sleep(5)
