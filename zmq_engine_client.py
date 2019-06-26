@@ -1,10 +1,16 @@
 import ast
 import json
 import time
+import spidev
+import struct
 
 from engine import EngineDriver
 import rov_comm
 import ports
+
+spi = spidev.SpiDev()
+spi.open(0,0)
+spi.max_speed_hz = 15600000
 
 def compute_power(front, right, up, yaw):
     """
@@ -22,7 +28,6 @@ def compute_power(front, right, up, yaw):
     należy nałożyć dodatkowe ograniczenia przy wyznaczaniu parametrów!
     """
 
-    vlvr_to_vb = 0.5    # stosunek mocy silników pionowych przednich do tylnego. do konfiguracji
     fl = 1
     fr = fl - 2*right - 2*yaw
     bl = fl - 2*front - 2*yaw
@@ -51,6 +56,13 @@ def compute_power(front, right, up, yaw):
     
     return motor_powers
 
+def set_engines(powers):
+    engines_list = ["fl", "fr", "bl", "br", "vfl", "vfr", "vbl", "vbr"]
+    for i in engines_list:
+        x = int(100 + powers[i] * 100, 10)
+        spi.writebytes(strct.pack("B",x))
+    spi.writebytes(struct.pack("B",255))
+
 engine_driver = EngineDriver()
 engine_slave = rov_comm.Client(ports.ENGINE_MASTER_PORT)
 print ("a")
@@ -66,7 +78,7 @@ while True:
         string['up'],string['yaw'])
         #print('dictionary type',type(dictionary),dictionary)
         #print(powers)
-        #tu wstawic nasza komunikacje (spi - Igor, Maciek)
+        set_engines(powers)
     except Exception as e:
         print(e)
         time.sleep(5)
