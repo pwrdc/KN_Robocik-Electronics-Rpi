@@ -59,7 +59,8 @@ def compute_power(front, right, up, yaw):
 def set_engines(powers):
     engines_list = ["fl", "fr", "bl", "br", "vfl", "vfr", "vbl", "vbr"]
     for i in engines_list:
-        x = int(100 + powers[i] * 100, 10)
+        x = 100 + powers[i] * 100
+        x = int(x)
         spi.writebytes(strct.pack("B",x))
     spi.writebytes(struct.pack("B",255))
 
