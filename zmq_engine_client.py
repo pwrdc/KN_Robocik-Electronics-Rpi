@@ -8,9 +8,13 @@ from engine import EngineDriver
 import rov_comm
 import ports
 
+max_current = 40 #maksymalny dopuszczalny prad w amperach
+
 spi = spidev.SpiDev()
 spi.open(0,0)
 spi.max_speed_hz = 15600000
+
+engines_list = ["fl", "fr", "bl", "br", "vfl", "vfr", "vbl", "vbr"]
 
 def compute_power(front, right, up, yaw):
     """
@@ -40,27 +44,34 @@ def compute_power(front, right, up, yaw):
     bl += correction
     br += correction
 
-    bl =-bl
-    br = -br
-
     motor_powers = {
-        "fl": fl,
-        "fr": fr,
-        "bl": bl,
-        "br": br,
-        "vfl": vbl,
-        "vfr": vbl,
-        "vbl": vbl,
-	"vbr": vbl
+        "fl": -fl,
+        "fr": -fr,
+        "bl": -bl,
+        "br": -br,
+        "vfl": -vbl,
+        "vfr":- vbl,
+        "vbl": -vbl,
+	"vbr": -vbl
     }
     
+    current = 0
+
+    for i in engines_list:
+        current += 20 * abs(motor_powers[i]) # 100% mocy na pojedynczy silnik to 20A
+    
+    if current < max_current:
+        norm_factor = max_current/current # wspolczynnik normalizacji mocy
+        for i in engines_list:
+            motor_powers[i] *= norm_factor
+
     return motor_powers
 
 def set_engines(powers):
-    engines_list = ["fl", "fr", "bl", "br", "vfl", "vfr", "vbl", "vbr"]
     for i in engines_list:
-        x = int(100 + powers[i] * 100, 10)
-        spi.writebytes(strct.pack("B",x))
+        x = 100 + powers[i] * 100
+        x = int(x)
+        spi.writebytes(struct.pack("B",x))
     spi.writebytes(struct.pack("B",255))
 
 engine_driver = EngineDriver()
@@ -77,7 +88,8 @@ while True:
         powers = compute_power(string['front'],string['right'],
         string['up'],string['yaw'])
         #print('dictionary type',type(dictionary),dictionary)
-        #print(powers)
+        print(powers)
+        time.sleep(0.15)
         set_engines(powers)
     except Exception as e:
         print(e)
