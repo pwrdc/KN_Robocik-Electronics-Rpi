@@ -74,7 +74,6 @@ def set_engines(powers):
         spi.writebytes(struct.pack("B",x))
     spi.writebytes(struct.pack("B",255))
 
-engine_driver = EngineDriver()
 engine_slave = rov_comm.Client(ports.ENGINE_MASTER_PORT)
 print ("a")
 while True:
@@ -89,7 +88,7 @@ while True:
         string['up'],string['yaw'])
         #print('dictionary type',type(dictionary),dictionary)
         print(powers)
-        time.sleep(0.15)
+        time.sleep(0.05)
         set_engines(powers)
     except Exception as e:
         print(e)
