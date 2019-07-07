@@ -12,17 +12,18 @@ class EngineDriver():
 
     old_min = -1
     old_max = 1
-    new_max = 255
-    new_min = 128
+    new_max = 238 # when there are not transoptor values max and min shoud be 5 units higher
+    new_min = 136
     set_dict = {"fl" : False, "fr" : False, "bl" : False, "br" : False,"vl" : False,"vr" : False,"vb" : False}
-    old_dict = {"fl" : 192, "fr" : 192, "bl" : 192, "br" : 192, "vl" : 192, "vr" : 192, "vb" : 192}
+    old_dict = {"fl" : 187, "fr" : 187, "bl" : 187, "br" : 187, "vl" : 187, "vr" : 187, "vb" : 187}
     def __init__(self):
-        self.engines_dict = {"fl" : 19, "fr" : 12, "bl" : 26, "br" : 21,"vl" : 13,"vr" : 16,"vb" : 20}
-        self._load_map_file()
+        self.engines_dict = {"fl" : 11, "fr" : 18, "bl" : 9, "br" : 25,"vl" : 10, "vr" : 23,"vb" : 24}
+        #self._load_map_file()
 
         self.pi = pigpio.pi()
         print("Ustawianie silników")
         for val in self.engines_dict.values():
+            print(val)
             self.pi.set_PWM_dutycycle(val, self.STOP)
             self.pi.set_PWM_frequency(val, self.FREQUENCY)
         time.sleep(5)
@@ -43,7 +44,8 @@ class EngineDriver():
                 string = json.load(_file)
                 dictionary = dict(string)
             self.engines_dict = dictionary
-        except Exception:
+        except Exception as e:
+            print(e)
             return
 
     def set_engines(self, dictionary):
@@ -68,8 +70,8 @@ class EngineDriver():
 if __name__ == '__main__':
     engine_driver = EngineDriver()
 
-    eng = {"fl" : 210, "fr" : 210, "bl" : 210, "br" : 210, "vl" : 210, "vr" : 210, "vb" : 210}
+    eng = {"fl" : 205, "fr" : 205, "bl" : 205, "br" : 205, "vl" : 205, "vr" : 205, "vb" : 205}
     engine_driver.set_engines(eng) #w
     time.sleep(2)
-    eng = {"fl" : 192, "fr" : 192, "bl" : 192, "br" : 192, "vl" : 192, "vr" : 192, "vb" : 192}
+    eng = {"fl" : 187, "fr" : 187, "bl" : 187, "br" : 187, "vl" : 187, "vr" : 187, "vb" : 187}
     engine_driver.set_engines(eng) #w
