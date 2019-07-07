@@ -5,14 +5,18 @@ from ports import DEPTH_DRIVER_PORT, DEPTH_CLIENT_PORT
 from rov_comm import Client, ZMQ_Server
 from logpy.LogPy import Logger
 
-SCALETOCM = 1.019
-
 
 class DepthSensor:
+    """
+    Depth sensor read depth from depth sensor and update that value in ZMQ server
+    """
     def __init__(self):
-        self.sensor = ms5837.MS5837_30BA() # Default I2C bus is 1 (Raspberry Pi 3)        
+        """
+        object connects to ZMQ sensor server, so ensure server is running befere init
+        """
+        self.sensor = ms5837.MS5837_02BA() # Default I2C bus is 1 (Raspberry Pi 3)
         self.client = Client(DEPTH_DRIVER_PORT)
-        #self.logger = Logger(filename='depth')
+        self.logger = Logger(filename='depth')
 
     def run(self):
         # We must initialize the sensor before reading it
@@ -27,15 +31,17 @@ class DepthSensor:
 
         loop_condition = True
         while loop_condition:
-            if self.sensor.read():
-                self.client.send_data(self.sensor.depth())
+            try:
+                if self.sensor.read():
+                    self.client.send_data(self.sensor.depth())
 
-                #print(self.sensor.pressure())
-                msg = str(self.sensor.depth())
-                #print(msg)
-                #self.logger.log(msg)
-            else:
-                loop_condition = False
+                    msg = str(self.sensor.depth())
+                    print(msg)
+                    self.logger.log(msg)
+                else:
+                    loop_condition = False
+            except Exception:
+                pass
     def __del__(self):
         pass
         #self.logger.exit()
