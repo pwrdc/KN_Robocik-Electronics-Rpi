@@ -178,12 +178,11 @@ def set_engines(powers):
         spi.writebytes(struct.pack("B",x))
     for i in range(5):
         tmp = spi.readbytes(1)[0]
-   
+
 if __name__ == '__main__':
     logger = DEFLOG.MOVEMENTS_LOCAL_LOG
     if logger:
-        logger = Logger(filename='depth_sensor', directory=DEFLOG.LOG_DIRECTORY)
-    logger = Logger()
+        logger = Logger(filename='zmq_engine_client', directory=DEFLOG.LOG_DIRECTORY)
     engine_slave = rov_comm.Client(ports.ENGINE_MASTER_PORT)
 
     if MODE == 'ROV4':

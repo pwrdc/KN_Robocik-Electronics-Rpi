@@ -37,7 +37,8 @@ class DepthSensor:
                 self.client.send_data(self.sensor.depth())
 
                 msg = str(self.sensor.depth())
-                self.logger.log(msg)
+                if self.logger:
+                    self.logger.log(msg)
             else:
                 loop_condition = False
 

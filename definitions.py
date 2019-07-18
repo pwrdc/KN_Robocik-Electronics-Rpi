@@ -1,8 +1,8 @@
-MODE = 'ROV3' # 'ROV3' or 'ROV4'
+MODE = 'ROV4' # 'ROV3' or 'ROV4'
 
 
 class DEFLOG:
-    LOG_DIRECTORY = "logs/"
+    LOG_DIRECTORY = "logs/electro/"
 
     DEPTH_LOCAL_LOG = True
 
