@@ -8,12 +8,15 @@ from logpy.LogPy import Logger
 
 class Sonar:
     def __init__(self, USB_device_adress=USB.SONAR):
-        self.sensor = Ping1D(USB_device_adress, 115200)
-        self.client = Client(DISTANCE_DRIVER_PORT)
-
         self.logger = DEFLOG.DISTANCE_LOCAL_LOG
         if DEFLOG.DISTANCE_LOCAL_LOG:
-            self.logger = Logger(filename='depth')
+            self.logger = Logger(filename='front_distance',
+                                 directory=DEFLOG.LOG_DIRECTORY)
+
+        self.sensor = Ping1D(USB_device_adress, 115200)
+        self.log("connected to the device")
+        self.client = Client(DISTANCE_DRIVER_PORT)
+        self.log("connected to the server")
 
     def run(self):
         # We must initialize the sensor before reading it
