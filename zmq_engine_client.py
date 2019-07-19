@@ -9,8 +9,14 @@ import ports
 
 from logpy.LogPy import Logger
 
+# Parametry ograniczeń
 
-max_current = 40 #maksymalny dopuszczalny prad w amperach
+max_current = 40    # maksymalny dopuszczalny prad w amperach
+v_derating = 0.0   # Zakres <0.0 : 1.0>,
+                            # kazda wartosc dopouszczalna, np:
+                            # 0.0 -  ograncza wszystkie silniki jednakowo
+                            # 0.5 - najpierw ogranicza silniki poziome (tylko połowe mocy), potem pionowe i poziome
+                            # 1.0 - najpierw ogranicza silniki poziome (az do całkowitego zatrzymania), potem pionowe
 
 ENGINES_LIST = ["fl", "fr", "bl", "br", "vfl", "vfr", "vbl", "vbr"]
 
@@ -113,8 +119,41 @@ def compute_power_rov4(front, right, up, yaw):
         "vfl": -vbl,
         "vfr": -vbl,
         "vbl": -vbl,
-	"vbr": -vbl
+	    "vbr": -vbl
     }
+
+    # ograniczenie mocy - BEGIN
+    current = 0
+    current_v = 0
+    current_h = 0
+
+    current_v += 20 * abs(motor_powers["fl"])
+    current_v += 20 * abs(motor_powers["fr"])
+    current_v += 20 * abs(motor_powers["bl"])
+    current_v += 20 * abs(motor_powers["br"])
+
+    current_h += 20*abs(motor_powers["vfl"])
+    current_h += 20*abs(motor_powers["vfr"])
+    current_h += 20*abs(motor_powers["vbl"])
+    current_h += 20*abs(motor_powers["vbr"])
+
+    current = current_h + current_v
+
+    over_current = current - max_current
+
+    if over_current > 0:
+        v_over_current = min(v_derating*max_current, over_current);
+        if current_v > 0:
+            v_over_current = min(v_over_current, current_v)
+            deratin_factor = 1.0 - v_over_current/current_v
+
+            motor_powers["fl"] = motor_powers["fl"]*deratin_factor
+            motor_powers["fr"] = motor_powers["fr"]*deratin_factor
+            motor_powers["bl"] = motor_powers["bl"]*deratin_factor
+            motor_powers["br"] = motor_powers["br"]*deratin_factor
+
+
+    # ograniczenie mocy na wszystkich silnikach
 
     current = 0
 
@@ -125,6 +164,9 @@ def compute_power_rov4(front, right, up, yaw):
         norm_factor = max_current/current # wspolczynnik normalizacji mocy
         for i in ENGINES_LIST:
             motor_powers[i] *= norm_factor
+
+
+    # ograniczenie mocy - END
 
     return motor_powers
 
