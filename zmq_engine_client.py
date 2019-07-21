@@ -9,6 +9,9 @@ import ports
 
 from logpy.LogPy import Logger
 
+# czuje wilgoci
+_humidity_front_value = 0.0
+_humidity_rear_value = 0.0
 # Parametry ograniczeń
 
 max_current = 40    # maksymalny dopuszczalny prad w amperach
@@ -19,6 +22,10 @@ v_derating = 0.0   # Zakres <0.0 : 1.0>,
                             # 1.0 - najpierw ogranicza silniki poziome (az do całkowitego zatrzymania), potem pionowe
 
 ENGINES_LIST = ["fl", "fr", "bl", "br", "vfl", "vfr", "vbl", "vbr"]
+
+# Humidity sensors
+def get_humidity_rear():
+    return _humidity_rear_value
 
 
 # ROV3
@@ -172,12 +179,18 @@ def compute_power_rov4(front, right, up, yaw):
 
 def set_engines(powers):
     spi.writebytes(struct.pack("B", 255))
+    rx_data = []
     for i in ENGINES_LIST:
         x = 100 + powers[i] * 100
         x = int(x)
         spi.writebytes(struct.pack("B",x))
     for i in range(5):
-        tmp = spi.readbytes(1)[0]
+        rx_data[i] = spi.readbytes(1)[0]
+
+    if rx_data[1] == '>' and rx_data[4] == '\n':
+        global _humidity_rear_value
+        _humidity_rear_value = rx_data[2] << 8 + rx_data[3]
+
 
 if __name__ == '__main__':
     logger = DEFLOG.MOVEMENTS_LOCAL_LOG
