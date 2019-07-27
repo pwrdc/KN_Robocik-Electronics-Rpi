@@ -3,7 +3,7 @@ from rov_comm import Client
 import time
 
 class Torpedoes:
-    is_ready = False
+    is_ready = True
     def __init__(self):
         self.client_fire = Client(TORPEDO_FIRE_DRIVER_PORT)
         self.client_ready = Client(TORPEDO_READY_CLIENT_PORT)
@@ -14,6 +14,7 @@ class Torpedoes:
         if command == "FIRE" and self.is_ready:
             print("I na koniec z obrotówy jeb") #tutaj szczelomy
             self.client_ready.send_data('WAIT')
+            self.is_ready = False
             self.reload_torpedo()
 
     def reload_torpedo(self):
@@ -23,6 +24,7 @@ class Torpedoes:
         """
         time.sleep(reload_time)  # jak umiecie jakieś lepsze czekanie, to zmieńcie
         self.client_ready.send_data('READY')
+        self.is_ready = True
 
 if __name__ == "__main__":
     torpedoes = Torpedoes()
