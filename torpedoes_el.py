@@ -1,18 +1,23 @@
+import time
+
 from ports import TORPEDO_FIRE_DRIVER_PORT, TORPEDO_READY_CLIENT_PORT
 from rov_comm import Client
-import time
+from torpedo_handling import TorpedoHandling
+
 
 class Torpedoes:
     is_ready = True
     def __init__(self):
         self.client_fire = Client(TORPEDO_FIRE_DRIVER_PORT)
         self.client_ready = Client(TORPEDO_READY_CLIENT_PORT)
+        self.torpedo_handling = TorpedoHandling()
 
     def fire(self):
         command = self.client_fire.get_data()
-        print(command)
+        #print(command)
         if command == "FIRE" and self.is_ready:
-            print("I na koniec z obrotówy jeb") #tutaj szczelomy
+            self.torpedo_handling.sequence()
+
             self.client_ready.send_data('WAIT')
             self.is_ready = False
             self.reload_torpedo()
