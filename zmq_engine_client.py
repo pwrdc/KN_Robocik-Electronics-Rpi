@@ -1,9 +1,12 @@
 import time
 import struct
-import spidev
 
-from engine import EngineDriver
 from definitions import MODE, DEFLOG
+if MODE=='ROV3':
+    from engine import EngineDriver
+else:
+    import spidev
+
 import rov_comm
 import ports
 
