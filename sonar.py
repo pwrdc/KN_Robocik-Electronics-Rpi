@@ -30,7 +30,7 @@ class Sonar:
         while loop_condition:
             data = self.sensor.get_distance()
             if data:
-                self.client.send_data(data)
+                self.client.send_data(data["distance"]/10)
                 msg = str(data["distance"])
                 self.log(msg)
             else:
