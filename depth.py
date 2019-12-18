@@ -5,7 +5,7 @@ from logpy.LogPy import Logger
 
 from ports import DEPTH_DRIVER_PORT, DEPTH_CLIENT_PORT
 from definitions import DEFLOG
-from rov_comm import Client
+from .rov_comm import Client
 
 class DepthSensor:
     def __init__(self):

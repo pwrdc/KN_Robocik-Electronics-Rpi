@@ -213,7 +213,7 @@ if __name__ == '__main__':
 
             time.sleep(0.05)
             if MODE == 'ROV4':
-                pass #set_engines(powers)
+                set_engines(powers)
             else:
                 engine_driver.set_engines(powers)
         except Exception as e:
