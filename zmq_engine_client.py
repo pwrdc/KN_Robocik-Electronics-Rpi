@@ -22,7 +22,7 @@ v_derating = 0.0   # Zakres <0.0 : 1.0>,
                             # 1.0 - najpierw ogranicza silniki poziome (az do całkowitego zatrzymania), potem pionowe
 
 ENGINES_LIST = ["fl", "fr", "bl", "br", "vfl", "vfr", "vbl", "vbr"]
-
+REMAP_ENGINES_LIST = ["vfr", "vfl", "bl", "br", "fl", "fr", "vbl", "vbr"] # mapowanie silnikow zgodne z ich fizycznym podlaczeniem
 
 # ROV3
 def _normalize_values(val_important, val_void):
@@ -175,7 +175,7 @@ def compute_power_rov4(front, right, up, yaw):
 
 def set_engines(powers):
     spi.writebytes(struct.pack("B", 255))
-    for i in ENGINES_LIST:
+    for i in REMAP_ENGINES_LIST:
         x = 100 + powers[i] * 100
         x = int(x)
         spi.writebytes(struct.pack("B",x))
