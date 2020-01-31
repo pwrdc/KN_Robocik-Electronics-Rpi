@@ -21,8 +21,8 @@ v_derating = 0.0   # Zakres <0.0 : 1.0>,
                             # 0.5 - najpierw ogranicza silniki poziome (tylko połowe mocy), potem pionowe i poziome
                             # 1.0 - najpierw ogranicza silniki poziome (az do całkowitego zatrzymania), potem pionowe
 
-ENGINES_LIST = ["fl", "fr", "bl", "br", "vfl", "vfr", "vbl", "vbr"]
-REMAP_ENGINES_LIST = ["vfr", "vfl", "bl", "br", "fl", "fr", "vbl", "vbr"] # mapowanie silnikow zgodne z ich fizycznym podlaczeniem
+ENGINES_LIST =       ["fl", "fr", "bl", "br", "vfl", "vfr", "vbl", "vbr"]
+REMAP_ENGINES_LIST = ["vfr", "vfl", "fl", "br", "bl", "vbr", "vbl", "fr"] # mapowanie silnikow zgodne z ich fizycznym podlaczeniem - 30.01.2019 (nowa rama)
 
 # ROV3
 def _normalize_values(val_important, val_void):
@@ -115,14 +115,14 @@ def compute_power_rov4(front, right, up, yaw):
 
     #1.07.2019 - zmiana mapowania na dzialajace z zalaczonym opisem podlaczenia PWM
     motor_powers = {
-        "fl": -fl,
-        "fr": -fr,
-        "bl": -bl,
-        "br": -br,
+        "fl": fl,
+        "fr": fr,
+        "bl": bl,
+        "br": br,
         "vfl": -vbl,
-        "vfr": -vbl,
-        "vbl": -vbl,
-	    "vbr": -vbl
+        "vfr": vbl,
+        "vbl": vbl,
+	"vbr": -vbl
     }
 
     # ograniczenie mocy - BEGIN
