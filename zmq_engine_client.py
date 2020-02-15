@@ -14,7 +14,7 @@ from logpy.LogPy import Logger
 
 # Parametry ograniczeń
 
-max_current = 40    # maksymalny dopuszczalny prad w amperach
+max_current = 30    # maksymalny dopuszczalny prad w amperach
 v_derating = 0.0   # Zakres <0.0 : 1.0>,
                             # kazda wartosc dopouszczalna, np:
                             # 0.0 -  ograncza wszystkie silniki jednakowo
@@ -114,6 +114,7 @@ def compute_power_rov4(front, right, up, yaw):
     br += correction
 
     #1.07.2019 - zmiana mapowania na dzialajace z zalaczonym opisem podlaczenia PWM
+    #znak w ponizszym slowniku odpowiada polaryzacji silnika.
     motor_powers = {
         "fl": fl,
         "fr": fr,
