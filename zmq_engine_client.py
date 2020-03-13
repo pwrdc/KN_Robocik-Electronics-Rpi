@@ -14,7 +14,7 @@ from logpy.LogPy import Logger
 
 # Parametry ograniczeń
 
-max_current = 30    # maksymalny dopuszczalny prad w amperach
+max_current = 60    # maksymalny dopuszczalny prad w amperach
 v_derating = 0.0   # Zakres <0.0 : 1.0>,
                             # kazda wartosc dopouszczalna, np:
                             # 0.0 -  ograncza wszystkie silniki jednakowo
@@ -22,7 +22,7 @@ v_derating = 0.0   # Zakres <0.0 : 1.0>,
                             # 1.0 - najpierw ogranicza silniki poziome (az do całkowitego zatrzymania), potem pionowe
 
 ENGINES_LIST =       ["fl", "fr", "bl", "br", "vfl", "vfr", "vbl", "vbr"]
-REMAP_ENGINES_LIST = ["vfr", "vfl", "fl", "br", "bl", "vbr", "vbl", "fr"] # mapowanie silnikow zgodne z ich fizycznym podlaczeniem - 30.01.2019 (nowa rama)
+REMAP_ENGINES_LIST = ["vbl", "vfr", "vfl", "fr", "fl", "br", "bl", "vbr"]
 
 # ROV3
 def _normalize_values(val_important, val_void):
@@ -116,13 +116,13 @@ def compute_power_rov4(front, right, up, yaw):
     #1.07.2019 - zmiana mapowania na dzialajace z zalaczonym opisem podlaczenia PWM
     #znak w ponizszym slowniku odpowiada polaryzacji silnika.
     motor_powers = {
-        "fl": fl,
-        "fr": fr,
-        "bl": bl,
-        "br": br,
+        "fl": -fl,
+        "fr": -fr,
+        "bl": -bl,
+        "br": -br,
         "vfl": -vbl,
-        "vfr": vbl,
-        "vbl": vbl,
+        "vfr": -vbl,
+        "vbl": -vbl,
 	"vbr": -vbl
     }
 
@@ -172,6 +172,12 @@ def compute_power_rov4(front, right, up, yaw):
 
     # ograniczenie mocy - END
 
+    for key in motor_powers:
+        if motor_powers[key]<-1:
+            motor_powers[key]=-1
+        if motor_powers[key]>1:
+            motor_powers[key]=1
+
     return motor_powers
 
 def set_engines(powers):
@@ -207,7 +213,7 @@ if __name__ == '__main__':
                                             movements['up'], movements['yaw'])
             else:
                 powers = compute_power_rov3(movements['front'], movements['right'],
-                                            movements['up'], movements['yaw'])
+                                            0, movements['yaw'])
 
             if logger:
                 logger.log("engines: "+str(powers))
