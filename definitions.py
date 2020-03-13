@@ -18,4 +18,4 @@ class DEFLOG:
 
 class USB:
     # Default mount point of usb sensors
-    SONAR = "/dev/ttyUSB1"
+    SONAR = "/dev/ttyUSB_SONAR"
